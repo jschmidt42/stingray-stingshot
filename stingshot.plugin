@@ -1,0 +1,41 @@
+// About
+//
+name = "Stingshot"
+description = "Take screenshots inside Stingray Editor removing gizmos in current viewport."
+version = "1.7.4"
+changelog = {
+    "1.7.0": "Sync up with Stingray 1.7."
+    "1.7.1": "Add Stingray 1.7 dependency."
+    "1.7.2": "Fix auto screenshot on thumbnail generation."
+    "1.7.3": "Remove thumbnail to use default one."
+    "1.7.4": "Fix menu path"
+}
+author = {
+    name = "Andrew & Jo"
+    url = "https://gamedev.autodesk.com/"
+}
+keywords = ["editor", "plugin", "utility"]
+
+// Extensions
+//
+ extensions = {
+    actions = [
+        { name = "take-focus-viewport-stingshot" type = "js" module = "libs/stingshot" function_name = "takeFocusViewportScreenshot" }
+    ]
+
+    menus = [
+        { path = "Edit/Take Screenshot" order = 485 shortcut = "Ctrl+Shift+L" action = "take-focus-viewport-stingshot"}
+    ]
+
+    resources = [
+        { path = "stingshot" }
+    ]
+}
+
+// Dependencies
+//
+platforms = ["win64"]
+dependencies = {
+    "stingray" = ">=1.7.0"
+}
+
