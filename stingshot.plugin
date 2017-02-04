@@ -2,17 +2,19 @@
 //
 name = "Stingshot"
 description = "Take screenshots inside Stingray Editor removing gizmos in current viewport."
-version = "1.7.4"
+version = "1.7.5"
 changelog = {
     "1.7.0": "Sync up with Stingray 1.7."
     "1.7.1": "Add Stingray 1.7 dependency."
     "1.7.2": "Fix auto screenshot on thumbnail generation."
     "1.7.3": "Remove thumbnail to use default one."
-    "1.7.4": "Fix menu path"
+    "1.7.5": "Fix menu path"
+    "1.7.5": "Add  README.md"
 }
 author = {
-    name = "Andrew & Jo"
-    url = "https://gamedev.autodesk.com/"
+    name = "Jonathan Schmidt"
+    email = "jonathan.schmidt@autodesk.com"
+    url = "https://github.com/jschmidt42/stingshot"
 }
 keywords = ["editor", "plugin", "utility"]
 
