@@ -10,20 +10,23 @@ define([
 
     let userSaveImageFilePath = window.localStorage.getItem(LEVEL_FILE_PATH_KEY_NAME) || stingray.env.userSettingsDir;
 
-    let listenForThumbnailGeneration = () => {
-        return engineService.addEditorEngineMessageHandler('thumbnail', (engine, message, data) => {
-            var blob = new Blob([data], {type: 'image/png'});
-            var imageReader = new FileReader();
-            imageReader.addEventListener("loadend", () => {
-                return fileSystemService.writeFile(userSaveImageFilePath, this.result).then(() => {
-                    return hostService.openUrl(userSaveImageFilePath);
+    engineService.sendToLocalEditors('require "stingshot/stingshot"');
+
+    function listenForThumbnailGeneration () {
+        return new Promise((resolve, reject) => {
+            let offListenForThumbnailGeneration = engineService.addEditorEngineMessageHandler('thumbnail', (engine, message, data) => {
+                var blob = new Blob([data], {type: 'image/png'});
+                var imageReader = new FileReader();
+                imageReader.addEventListener("loadend", function() {
+                    fileSystemService.writeFile(userSaveImageFilePath, this.result)
+                        .then(() => hostService.openUrl(userSaveImageFilePath))
+                        .then(() => offListenForThumbnailGeneration())
+                        .then(resolve, reject);
                 });
+                imageReader.readAsArrayBuffer(blob);
             });
-            imageReader.readAsArrayBuffer(blob);
         });
     }
-
-    engineService.sendToLocalEditors('require "stingshot/stingshot"');
 
     function takeFocusViewportScreenshot () {
         return hostService.openNativeDialog(
@@ -37,12 +40,11 @@ define([
                 return Promise.reject('canceled');
             userSaveImageFilePath = selectedPath;
             window.localStorage.setItem(LEVEL_FILE_PATH_KEY_NAME, userSaveImageFilePath);
-            let offListenForThumbnailGeneration = listenForThumbnailGeneration();
+            listenForThumbnailGeneration();
             return engineService.sendToLocalEditors('Stingshot.remove_focus_viewport_hud()')
                 .then(() => engineService.postEditorCallback())
                 .then(() => engineService.sendToLocalEditors('Stingshot.take_focus_viewport_screenshot()'))
-                .then(() => engineService.sendToLocalEditors('Stingshot.restore_focus_viewport_hud()'))
-                .then(() => offListenForThumbnailGeneration());
+                .then(() => engineService.sendToLocalEditors('Stingshot.restore_focus_viewport_hud()'));
         });
     }
 
